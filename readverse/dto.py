@@ -18,3 +18,13 @@ class CreateStoryDTO(BaseModel):
 
 class SearchQueryDTO(BaseModel):
     query: int | None = None
+
+
+class LoginFormDTO(BaseModel):
+    username: str
+    password: str
+
+
+class RegisterFormDTO(LoginFormDTO):
+    phone_number: str
+    email: str

@@ -1,3 +1,4 @@
+{% import 'macro/forms.html' as forms %}
 <html data-theme="dark">
 <head>
     <meta charset="UTF-8">
@@ -19,12 +20,13 @@
         {% if current_user.is_admin %}
           <a href="/admin" class="btn btn-primary">Admin</a>
         {% else %}
-          <a href="/profile" class="btn btn-primary">profile</a>
+          <a href="/profile" class="btn btn-primary">Profile</a>
         {% endif %}
 
         <a href="/auth/logout" class="btn btn-error">Logout</a>
       {% else %}
         <a href="/auth/login" class="btn btn-primary">Login</a>
+        <a href="/auth/register" class="btn btn-secondary">Register</a>
       {% endif %}
     </div>
   </nav>

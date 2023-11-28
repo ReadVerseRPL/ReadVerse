@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1 class="text-2xl font-bold py-4">Login</h1>
+<form class="flex flex-col gap-4" method="POST">
+  {{ forms.inputlabel("username", label="Username", type="text") }}
+  {{ forms.inputlabel("password", label="Password", type="password") }}
+  <button class="btn btn-primary">Login</button>
+</form>
+{% endblock %}

@@ -18,10 +18,10 @@ def validate(f: t.Callable[P, TResponse]):
     def inner(*args: P.args, **kwargs: P.kwargs):
         try:
             if form_model:
-                kwargs["form"] = form_model.model_validate(request.form)
+                kwargs["form"] = form_model.model_validate(request.form.to_dict())
 
             if query_model:
-                kwargs["query"] = query_model.model_validate(request.args)
+                kwargs["query"] = query_model.model_validate(request.args.to_dict())
 
             if json_model:
                 kwargs["json"] = json_model.model_validate_json(request.data)
