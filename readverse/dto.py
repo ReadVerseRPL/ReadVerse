@@ -1,4 +1,7 @@
-from pydantic import BaseModel
+from typing_extensions import Annotated
+from pydantic import BaseModel, StringConstraints
+
+RequiredString = Annotated[str, StringConstraints(min_length=1)]
 
 
 class CreateCommentDTO(BaseModel):
@@ -10,10 +13,10 @@ class CreateRatingDTO(BaseModel):
 
 
 class CreateStoryDTO(BaseModel):
-    title: str
-    description: str
-    content: str
-    genres: list[str]
+    title: RequiredString
+    description: RequiredString
+    content: RequiredString
+    genres: list[RequiredString] | RequiredString = []
 
 
 class SearchQueryDTO(BaseModel):
