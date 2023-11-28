@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy import ARRAY, Boolean, ForeignKey, MetaData
+from sqlalchemy import ARRAY, JSON, Boolean, ForeignKey, MetaData
 from sqlalchemy import Integer, String, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship, with_polymorphic
 
@@ -78,7 +78,8 @@ class Story(BaseModel):
     title: Mapped[str] = mapped_column(String)
     description: Mapped[str] = mapped_column(String)
     content: Mapped[str] = mapped_column(String)
-    genres: Mapped[list[str]] = mapped_column(ARRAY(String, dimensions=1))
+    genres: Mapped[list[str]] = mapped_column(JSON)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
 
     author_id: Mapped[str] = mapped_column(ForeignKey("user.username"))
     author: Mapped[RegularUser] = relationship(back_populates="stories")
