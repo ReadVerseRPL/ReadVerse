@@ -52,6 +52,9 @@ class User(BaseModel):
 
 
 class Admin(User):
+    __tablename__ = "admin"
+    username: Mapped[str] = mapped_column(ForeignKey("user.username"), primary_key=True)
+
     is_admin = True
 
     __mapper_args__ = {
@@ -60,6 +63,8 @@ class Admin(User):
 
 
 class RegularUser(User):
+    __tablename__ = "regularuser"
+    username: Mapped[str] = mapped_column(ForeignKey("user.username"), primary_key=True)
     about: Mapped[str] = mapped_column(String)
     website: Mapped[str] = mapped_column(String)
     description: Mapped[str] = mapped_column(String)
