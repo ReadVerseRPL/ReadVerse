@@ -1,0 +1,42 @@
+<html data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReadVerse</title>
+
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" type="text/css" />
+</head>
+
+
+<section class="content">
+  <nav class="flex flex-col md:flex-row p-4 justify-between md:items-center gap-4">
+    <a href="/"><strong class="font-bold text-xl">ReadVerse</strong></a>
+    <form action="/search" class="w-full m-0">
+        <input type="text" placeholder="Search" class="input input-bordered w-full" name="query" />
+    </form>
+    <div class="flex flex-col md:flex-row gap-4 md:items-center">
+      {% if current_user.is_authenticated %}
+        {% if current_user.is_admin %}
+          <a href="/admin" class="btn btn-primary">Admin</a>
+        {% else %}
+          <a href="/profile" class="btn btn-primary">profile</a>
+        {% endif %}
+
+        <a href="/auth/logout" class="btn btn-error">Logout</a>
+      {% else %}
+        <a href="/auth/login" class="btn btn-primary">Login</a>
+      {% endif %}
+    </div>
+  </nav>
+
+  <div class="container mx-auto">
+    <div class="pb-4">
+    {% for category, message in get_flashed_messages(with_categories=true) %}
+      <div class="p-4 {% if category == "message" %}bg-primary text-primary-content{% else %}bg-{{category}} text-{{category}}-content{% endif %} rounded-md">{{ message }}</div>
+    {% endfor %}
+    </div>
+
+    {% block content %}{% endblock %}
+  </div>
+</section>
+</html>
