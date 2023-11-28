@@ -1,5 +1,20 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>TODO</h1>
+<h1 class="text-2xl font-bold pt-4 pb-2">{{ story.title }}</h1>
+<p>Written by {{ story.author.username }}</p>
+
+<div class="divider"></div>
+
+<h2 class="text-xl font-bold pb-2">Description</h2>
+<p class="pb-8">{{ story.description }}</p>
+
+<article class="prose mx-auto p-8 bg-gray-800 rounded-md !max-w-4xl" id="story"></article>
+
+<script defer>
+    const content = {{ story.content | tojson }}
+    document.querySelector("#story").innerHTML = DOMPurify.sanitize(
+      marked.parse(content)
+    );
+</script>
 {% endblock %}
