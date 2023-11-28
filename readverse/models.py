@@ -65,9 +65,9 @@ class Admin(User):
 class RegularUser(User):
     __tablename__ = "regularuser"
     username: Mapped[str] = mapped_column(ForeignKey("user.username"), primary_key=True)
-    about: Mapped[str] = mapped_column(String)
-    website: Mapped[str] = mapped_column(String)
-    description: Mapped[str] = mapped_column(String)
+    about: Mapped[str] = mapped_column(String, default="")
+    website: Mapped[str] = mapped_column(String, default="")
+    description: Mapped[str] = mapped_column(String, default="")
 
     stories: Mapped[list["Story"]] = relationship(back_populates="author")
 
