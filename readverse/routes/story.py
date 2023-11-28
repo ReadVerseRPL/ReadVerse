@@ -1,4 +1,5 @@
-from flask import Blueprint, jsonify, redirect, render_template, request, url_for
+from flask import Blueprint, abort, jsonify, redirect, render_template, request, url_for
+from sqlalchemy import select
 from readverse.plugins import current_user
 from readverse.models import db, Story
 from readverse.dto import CreateCommentDTO, CreateRatingDTO, CreateStoryDTO
@@ -36,8 +37,13 @@ def create_story_page():
 
 @bp.get("/<int:story_id>")
 def read_story(story_id: int):
-    # TODO: Get story by ID
-    return render_template("pages/story/read.html")
+    story = db.session.execute(
+        select(Story).where(Story.id == story_id)
+    ).scalar_one_or_none()
+    if not story:
+        abort(404)
+
+    return render_template("pages/story/read.html", story=story)
 
 
 @bp.get("/<int:story_id>/edit")
