@@ -1,3 +1,4 @@
+import signal
 import subprocess
 import time
 
@@ -14,5 +15,14 @@ if __name__ == "__main__":
         shell=True,
     )
 
-    server.wait()
-    tailwind.kill()
+    def kill_servers_exit(_, __):
+        server.kill()
+        tailwind.kill()
+        exit()
+
+    signal.signal(signal.SIGINT, kill_servers_exit)
+    while True:
+        try:
+            time.sleep(0.1)
+        except KeyboardInterrupt:
+            kill_servers_exit(None, None)
