@@ -6,16 +6,16 @@
     <title>ReadVerse</title>
 
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" type="text/css" />
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
     <script src="{{ url_for('static', filename='utils.js') }}" ></script>
 </head>
 
 
 <section class="content">
-  <nav class="flex flex-col md:flex-row p-4 justify-between md:items-center gap-4">
+  <nav class="flex flex-col md:flex-row p-4 md:items-center gap-4">
     <a href="/"><strong class="font-bold text-xl">ReadVerse</strong></a>
-    <form action="/search" class="w-full m-0">
+    <form action="/search" class="m-0 flex-1 grow">
         <input type="text" placeholder="Search" class="input input-bordered w-full" name="query" />
     </form>
     <div class="flex flex-col md:flex-row gap-4 md:items-center">
@@ -24,6 +24,7 @@
           <a href="/admin" class="btn btn-primary">Admin</a>
         {% else %}
           <a href="/profile" class="btn btn-primary">Profile</a>
+          <a href="/story/new" class="btn btn-primary">Create Story</a>
         {% endif %}
 
         <a href="/auth/logout" class="btn btn-error">Logout</a>
