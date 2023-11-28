@@ -17,7 +17,7 @@ class CreateStoryDTO(BaseModel):
 
 
 class SearchQueryDTO(BaseModel):
-    query: int | None = None
+    query: str | None = None
 
 
 class LoginFormDTO(BaseModel):
