@@ -10,7 +10,9 @@ load_dotenv()
 
 def create_app():
     app = Flask(__name__)
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///project.db"
+    app.config["SQLALCHEMY_DATABASE_URI"] = environ.get(
+        "DATABASE_URI", "sqlite:///project.db"
+    )
     app.config["TEMPLATES_AUTO_RELOAD"] = True
     app.config["SECRET_KEY"] = environ.get("SECRET_KEY")
 
