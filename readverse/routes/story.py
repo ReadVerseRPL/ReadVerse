@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, redirect, render_template, request, url_for
-
+from readverse.plugins import current_user
+from readverse.models import db, Story
 from readverse.dto import CreateCommentDTO, CreateRatingDTO, CreateStoryDTO
 from readverse.utils import validate
 
@@ -10,8 +11,22 @@ bp = Blueprint("story", __name__, url_prefix="/story")
 @bp.post("/new")
 @validate
 def create_story(form: CreateStoryDTO):
-    # TODO: Create story based on input and redirect to story
-    return redirect(url_for("story.read_story", story_id=-1))
+    genres = form.genres
+    if isinstance(genres, str):
+        genres = [genres]
+
+    story = Story(
+        title=form.title,
+        description=form.description,
+        content=form.content,
+        genres=genres,
+        author=current_user,
+    )
+
+    db.session.add(story)
+    db.session.commit()
+
+    return redirect(url_for("story.read_story", story_id=story.id))
 
 
 @bp.get("/new")
