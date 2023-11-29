@@ -129,8 +129,6 @@ def create_rating(story_id: int, json: CreateRatingDTO):
     if not story:
         abort(404)
 
-
-    print(111)
     oldRating: Rating = db.session.execute(
         select(Rating).where(Rating.author == current_user)
     ).scalar_one_or_none()
@@ -141,7 +139,7 @@ def create_rating(story_id: int, json: CreateRatingDTO):
             author = current_user,
             story = story,
         )
-        
+
         db.session.add(rating)
         db.session.commit()
 
