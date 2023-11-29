@@ -28,7 +28,7 @@ def login(form: LoginFormDTO):
 
     if not user or not check_password_hash(user.password, password):
         flash("Invalid username or password", "error")
-        return redirect(url_for("index.login_page"))
+        return redirect(url_for("auth.login_page"))
 
     login_user(user)
     return redirect(url_for("index.index"))
