@@ -1,7 +1,7 @@
 from flask import Blueprint, abort, jsonify, redirect, render_template, request, url_for
 from sqlalchemy import select
 from readverse.plugins import current_user
-from readverse.models import db, Story
+from readverse.models import Rating, RegularUser, db, Story
 from readverse.dto import CreateCommentDTO, CreateRatingDTO, CreateStoryDTO
 from readverse.utils import validate
 
@@ -43,7 +43,17 @@ def read_story(story_id: int):
     if not story:
         abort(404)
 
-    return render_template("pages/story/read.html", story=story)
+    current_rating = None
+    if current_user and isinstance(current_user, RegularUser):
+        current_rating = db.session.execute(
+            select(Rating).where(Rating.author == current_user)
+        ).scalar_one_or_none()
+
+    return render_template(
+        "pages/story/read.html",
+        story=story,
+        current_rating=current_rating,
+    )
 
 
 @bp.get("/<int:story_id>/edit")

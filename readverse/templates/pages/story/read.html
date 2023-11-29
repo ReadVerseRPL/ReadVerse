@@ -22,25 +22,34 @@
 
 <article class="prose mx-auto p-8 bg-gray-800 rounded-md !max-w-4xl" id="story"></article>
 
+{% if current_user.is_authenticated and not current_user.is_admin %}
 <div class="divider"></div>
 
 <div class="flex flex-col gap-4 items-center">
   <strong class="text-xl text-center font-bold">Rate this story!</strong>
   <div class="rating rating-lg">
     <input type="radio" name="rating" value="-1" disabled checked class="hidden" />
-    <input type="radio" name="rating" value="1" class="mask mask-star-2 bg-orange-400" />
-    <input type="radio" name="rating" value="2" class="mask mask-star-2 bg-orange-400" />
-    <input type="radio" name="rating" value="3" class="mask mask-star-2 bg-orange-400" />
-    <input type="radio" name="rating" value="4" class="mask mask-star-2 bg-orange-400" />
-    <input type="radio" name="rating" value="5" class="mask mask-star-2 bg-orange-400" />
+    {% for i in range(1, 6) %}
+    <input
+      type="radio"
+      name="rating"
+      value="1"
+      {% if current_rating and i == current_rating.value %}checked{% endif %}
+      class="mask mask-star-2 bg-orange-400" />
+    {% endfor %}
   </div>
   <button class="btn btn-primary w-fit mx-auto" id="submitrating">Submit</button>
 </div>
+{% endif %}
 
+
+{% if current_user.is_authenticated and not current_user.is_admin %}
 <div class="divider"></div>
 
 <h2 class="text-xl font-bold pb-2">Comments</h2>
 <div class="py-4" id="comments"></div>
+<script type="module" src="{{ url_for('static', filename='story/comments.js') }}"></script>
+{% endif %}
 
 <script defer>
     const content = {{ story.content | tojson }}
@@ -64,5 +73,4 @@
       alert("Successfully rated!")
     })
 </script>
-<script type="module" src="{{ url_for('static', filename='story/comments.js') }}"></script>
 {% endblock %}
