@@ -18,6 +18,7 @@ def profile():
 @bp.get("/edit")
 def edit_profile():
     # TODO: Show edit profile form
+    print(current_user.description)
     return render_template("pages/profile/edit.html",
         user = current_user
     )

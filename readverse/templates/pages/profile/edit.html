@@ -15,13 +15,13 @@
 
     <div class="grid grid-cols-2 gap-4">
         {% call forms.labelled_field("Description") %}
-            <textarea class="textarea textarea-bordered w-full" name="description" placeholder="Describe yourself here.." id="description"></textarea>
+            <textarea class="textarea textarea-bordered w-full" name="description" placeholder="Describe yourself here.." id="description">{{user.description}}</textarea>
         {% endcall %}
         
         <div class="flex flex-col gap-2">
             <span class="text-sm align-bottom py-2">Preview</span>
             <article class="prose" id="preview">
-
+                
             </article>
         </div>
     </div>
@@ -30,11 +30,4 @@
 </form>
 
 <script src="{{ url_for('static', filename='profile/edit.js') }}"></script>
-<script defer>
-    const content = {{ user.description | tojson }}
-    document.querySelector("#description").innerHTML = DOMPurify.sanitize(
-      marked.parse(content)
-    );
-    
-</script>
 {% endblock %}
