@@ -30,4 +30,11 @@
 </form>
 
 <script src="{{ url_for('static', filename='profile/edit.js') }}"></script>
+<script defer>
+    const content = {{ user.description | tojson }}
+    document.querySelector("#preview").innerHTML = DOMPurify.sanitize(
+      marked.parse(content)
+    );
+    
+</script>
 {% endblock %}
