@@ -1,6 +1,6 @@
 from flask import Blueprint, flash, redirect, render_template, url_for
 from flask_login import login_required, login_user, logout_user
-from sqlalchemy import select
+from sqlalchemy import or_, select
 from readverse.dto import LoginFormDTO, RegisterFormDTO
 from readverse.models import AllUser, RegularUser, db
 
@@ -42,6 +42,18 @@ def register_page():
 @bp.post("/register")
 @validate
 def register(form: RegisterFormDTO):
+    existing = db.session.execute(
+        select(RegularUser).where(
+            or_(
+                RegularUser.username == form.username,
+                RegularUser.email == form.email,
+            )
+        )
+    ).scalar_one_or_none()
+    if existing:
+        flash("Username/email already exists!", "error")
+        return redirect(url_for("auth.register_page"))
+
     user = RegularUser(
         username=form.username,
         password=generate_password_hash(form.password),
