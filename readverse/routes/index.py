@@ -15,26 +15,11 @@ def index():
 
     # TODO: to be delete. 
     # Dummy data for recent stories
-    recent_stories = [
-        Story(
-            id=1,
-            title="The Mysterious Forest",
-            description="An intriguing tale of adventure and mystery in a mystical forest.",
-            created_at=datetime.now()
-        ),
-        Story(
-            id=2,
-            title="Journey to the Unknown",
-            description="A gripping story of a brave explorer facing the unknown.",
-            created_at=datetime.now()
-        ),
-        Story(
-            id=3,
-            title="The Lost Treasure",
-            description="A thrilling hunt for a long-lost treasure that hides a dark secret.",
-            created_at=datetime.now()
-        )
-    ]*3
+    # recent_stories = [
+    #     Story(id=1,title="The Mysterious Forest",description="An intriguing tale of adventure and mystery in a mystical forest.",created_at=datetime.now()),
+    #     Story(id=2,title="Journey to the Unknown",description="A gripping story of a brave explorer facing the unknown.",created_at=datetime.now()),
+    #     Story(id=3,title="The Lost Treasure",description="A thrilling hunt for a long-lost treasure that hides a dark secret.",created_at=datetime.now())
+    # ]*3
 
     # Pass the stories to the template
     return render_template("pages/index.html", recent_stories=recent_stories)

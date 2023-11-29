@@ -1,31 +1,36 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="edit-story-form">
-    <h1>Edit Story</h1>
-    <form action="{{ url_for('story.edit_story', story_id=story.id) }}" method="post">
-        <div class="form-group">
-            <label for="title">Title:</label>
-            <input type="text" id="title" name="title" value="{{ story.title }}" required class="input input-bordered">
-        </div>
+<h1 class="text-2xl font-bold py-4">Edit Story</h1>
+<form class="flex flex-col gap-4" method="POST" action="{{ url_for('story.edit_story', story_id=story.id) }}">
+    {{ forms.inputlabel("title", label="Title", type="text", value=story.title) }}
+    {% call forms.labelled_field("Description") %}
+        <textarea class="textarea textarea-bordered w-full" name="description" placeholder="Description">{{ story.description }}</textarea>
+    {% endcall %}
 
-        <div class="form-group">
-            <label for="description">Description:</label>
-            <textarea id="description" name="description" required class="textarea textarea-bordered">{{ story.description }}</textarea>
+    <div class="grid grid-cols-2 gap-4">
+        {% call forms.labelled_field("Content") %}
+            <textarea class="textarea textarea-bordered w-full" name="content" placeholder="Content" id="content">{{ story.content }}</textarea>
+        {% endcall %}
+        
+        <div class="flex flex-col gap-2">
+            <span class="text-sm align-bottom py-2">Preview</span>
+            <article class="prose" id="preview">
+                {{ story.content | safe }}
+            </article>
         </div>
+    </div>
+    
+    <h4 class="font-bold">Genres</h4>
+    <div class="flex flex-col gap-2" id="genrecontainer">
+        {% for genre in story.genres %}
+            <input type="text" class="input input-bordered" name="genres" value="{{ genre }}">
+        {% endfor %}
+    </div>
+    <button type="button" class="btn btn-primary w-fit" id="addGenreBtn">Add genre</button>
 
-        <div class="form-group">
-            <label for="content">Content:</label>
-            <textarea id="content" name="content" required class="textarea textarea-bordered">{{ story.content }}</textarea>
-        </div>
+    <button type="submit" class="btn btn-primary mt-4">Update</button>
+</form>
 
-        <div class="form-group">
-            <label for="genres">Genres:</label>
-            <input type="text" id="genres" name="genres" value="{{ story.genres|join(', ') }}" class="input input-bordered">
-            <small>Separate genres with commas</small>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Update Story</button>
-    </form>
-</div>
+<script src="{{ url_for('static', filename='story/edit.js') }}"></script>
 {% endblock %}

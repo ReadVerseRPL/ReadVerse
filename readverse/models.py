@@ -2,8 +2,8 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy import ARRAY, JSON, Boolean, ForeignKey, MetaData
-from sqlalchemy import Integer, String, DateTime
+from sqlalchemy import ARRAY, JSON, Boolean, ForeignKey, MetaData, select
+from sqlalchemy import Integer, String, DateTime, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship, with_polymorphic
 
 
@@ -91,6 +91,13 @@ class Story(BaseModel):
 
     comments: Mapped[list["Comment"]] = relationship(back_populates="story")
     ratings: Mapped[list["Rating"]] = relationship(back_populates="story")
+
+    @property
+    def overall_rating(self):
+        result: float | None = db.session.execute(
+            select(func.avg(Rating.value)).where(Rating.story == self)
+        ).scalar_one()
+        return result
 
 
 class Comment(BaseModel):
