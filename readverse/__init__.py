@@ -1,5 +1,6 @@
+from werkzeug.exceptions import HTTPException
 from os import environ
-from flask import Flask
+from flask import Flask, render_template
 from dotenv import load_dotenv
 from sqlalchemy import select
 
@@ -39,5 +40,24 @@ def create_app():
     app.register_blueprint(index_bp)
     app.register_blueprint(profile_bp)
     app.register_blueprint(story_bp)
+
+    @app.errorhandler(HTTPException)
+    def handle_http_exception(e: HTTPException):
+        response = e.get_response()
+        status_code = response.status_code
+        message = e.description or response.status
+        return render_template(
+            "error.html",
+            status_code=status_code,
+            message=message,
+        )
+
+    @app.errorhandler(Exception)
+    def handle_exception(e: HTTPException):
+        return render_template(
+            "error.html",
+            status_code=500,
+            message="Something terrible happened",
+        )
 
     return app

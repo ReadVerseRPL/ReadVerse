@@ -5,4 +5,12 @@ module.exports = {
     extend: {},
   },
   plugins: [require("@tailwindcss/typography"), require("daisyui")],
+  safelist: [
+    {
+      pattern: /bg-(info|success|warning|error)/,
+    },
+    {
+      pattern: /text-(info|success|warning|error)-content/,
+    },
+  ],
 };
