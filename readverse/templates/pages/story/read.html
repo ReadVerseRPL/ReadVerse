@@ -2,7 +2,13 @@
 
 {% block content %}
 <h1 class="text-2xl font-bold pt-4 pb-2">{{ story.title }}</h1>
+<div class="flex flex-wrap gap-2">
+  {% for genre in story.genres %}
+    <div class="badge badge-secondary">{{ genre }}</div>
+  {% endfor %}
+</div>
 <p>Written by {{ story.author.username }}</p>
+
 
 {% if current_user.username == story.author_id %}
     <!-- Edit Button -->
