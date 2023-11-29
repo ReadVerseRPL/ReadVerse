@@ -22,7 +22,10 @@
     <h4 class="font-bold">Genres</h4>
     <div class="flex flex-col gap-2" id="genrecontainer">
         {% for genre in story.genres %}
-            <input type="text" class="input input-bordered" name="genres" value="{{ genre }}">
+            <div class="flex flex-row gap-2">
+                <button class="btn btn-error text-xl remove">&times;</button>
+                <input class="input input-bordered w-full" type="text" name="genres" value="{{ genre }}" />
+            </div>
         {% endfor %}
     </div>
     <button class="btn btn-primary w-fit" id="addGenreBtn">Add genre</button>
