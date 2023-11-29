@@ -6,15 +6,63 @@
 
 <div class="divider"></div>
 
-<h2 class="text-xl font-bold pb-2">Description</h2>
-<p class="pb-8">{{ story.description }}</p>
+<div class="flex w-full justify-center pb-8">
+  <div class="flex flex-col gap-4 w-full">
+    <h2 class="text-xl font-bold pb-2">Description</h2>
+    <p class="pb-8">{{ story.description }}</p>
+  </div>
+
+  <div class="divider divider-horizontal"></div>
+
+  <div class="flex flex-col gap-4">
+    <strong class="text-xl text-center font-bold">Rating</strong>
+    <strong class="text-center font-bold text-2xl">{{ story.overall_rating | default("No Data", true) }}</strong>
+  </div>
+</div>
 
 <article class="prose mx-auto p-8 bg-gray-800 rounded-md !max-w-4xl" id="story"></article>
+
+<div class="divider"></div>
+
+<div class="flex flex-col gap-4 items-center">
+  <strong class="text-xl text-center font-bold">Rate this story!</strong>
+  <div class="rating rating-lg">
+    <input type="radio" name="rating" value="-1" disabled checked class="hidden" />
+    <input type="radio" name="rating" value="1" class="mask mask-star-2 bg-orange-400" />
+    <input type="radio" name="rating" value="2" class="mask mask-star-2 bg-orange-400" />
+    <input type="radio" name="rating" value="3" class="mask mask-star-2 bg-orange-400" />
+    <input type="radio" name="rating" value="4" class="mask mask-star-2 bg-orange-400" />
+    <input type="radio" name="rating" value="5" class="mask mask-star-2 bg-orange-400" />
+  </div>
+  <button class="btn btn-primary w-fit mx-auto" id="submitrating">Submit</button>
+</div>
+
+<div class="divider"></div>
+
+<h2 class="text-xl font-bold pb-2">Comments</h2>
+<div class="py-4" id="comments"></div>
 
 <script defer>
     const content = {{ story.content | tojson }}
     document.querySelector("#story").innerHTML = DOMPurify.sanitize(
       marked.parse(content)
     );
+
+    document.querySelector("#submitrating").addEventListener("click", async (e) => {
+      e.preventDefault()
+      const rating = document.querySelector('input[name="rating"]:checked').value
+      if (!!!rating || rating == -1) return alert("Invalid rating value!")
+
+      await fetch("/story/{{ story.id }}/rate", {
+        method: "POST",
+        body: JSON.stringify({ value: rating }),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+
+      alert("Successfully rated!")
+    })
 </script>
+<script type="module" src="{{ url_for('static', filename='story/comments.js') }}"></script>
 {% endblock %}

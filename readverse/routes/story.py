@@ -61,7 +61,12 @@ def edit_story(form: CreateStoryDTO):
 @bp.get("/<int:story_id>/comments")
 def comments(story_id: int):
     # TODO: Get all comments and return as json
-    return jsonify([])
+    return jsonify(
+        {
+            "message": "Success",
+            "data": [],
+        }
+    )
 
 
 @bp.post("/<int:story_id>/comment")
