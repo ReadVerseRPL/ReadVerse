@@ -1,7 +1,7 @@
 from flask import Blueprint, abort, jsonify, redirect, render_template, request, url_for
 from sqlalchemy import select
 from readverse.plugins import current_user
-from readverse.models import Rating, RegularUser, db, Story
+from readverse.models import Rating, RegularUser, db, Story, Comment
 from readverse.dto import CreateCommentDTO, CreateRatingDTO, CreateStoryDTO
 from readverse.utils import validate
 
@@ -132,19 +132,39 @@ def create_rating(story_id: int, json: CreateRatingDTO):
 
 @bp.delete("/<int:story_id>/delete")
 def delete_story(story_id: int):
-    # TODO: Delete rating here, return json. CHECK IF ADMIN!
-    return jsonify(
-        {
-            "message": "Story deleted",
-        }
-    )
+    story = db.session.execute(
+        select(Story).where(Story.id == story_id)
+    ).scalar_one_or_none()
+    if not story:
+        abort(404)
+
+    if (story.author_id == current_user.get_id() or current_user.is_admin):
+        db.session.delete(story)
+        db.session.commit()
+        return jsonify(
+            {
+                "message": "Story deleted",
+            }
+        )
+    
+    abort(404)
 
 
 @bp.delete("/<int:story_id>/comment/<int:comment_id>/delete")
 def delete_comment(story_id: int, comment_id: int):
-    # TODO: Delete comment based on story. CHECK IF ADMIN!
-    return jsonify(
-        {
-            "message": "Comment deleted",
-        }
-    )
+    comment = db.session.execute(
+        select(Comment).where(Comment.id == comment_id)
+    ).scalar_one_or_none()
+    if not comment:
+        abort(404)
+
+    if (current_user.is_admin):
+        db.session.delete(comment)
+        db.session.commit()
+        return jsonify(
+            {
+                "message": "Comment deleted",
+            }
+        )
+    
+    abort(404)

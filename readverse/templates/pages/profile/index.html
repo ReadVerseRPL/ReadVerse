@@ -1,5 +1,46 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>TODO</h1>
+<h1 class="text-3xl font-bold pb-8">Profile</h1>
+<div class="w-3/4">
+    <div class="story-card p-4 rounded-lg border border-gray-300">
+        <div class="flex justify-between items-center pb-2">
+            <p class="text-2xl font-bold">{{ user.username }}</p>
+            <a href="{{ url_for('profile.edit_profile') }}" class="text-gray-400 hover:text-gray-300">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                  </svg>      
+            </a>
+        </div>
+
+        <hr>
+        <div class="grid grid-cols-2 gap-4 py-4">
+            <p>About</p>
+            <p class="break-all overflow-wrap-anywhere">{{ user.about or '-' }}</p>
+            <p>Phone Number</p>
+            <p class="break-all overflow-wrap-anywhere">{{ user.phone_number }}</p>
+            <p>Email</p>
+            <p class="break-all overflow-wrap-anywhere">{{ user.email }}</p>
+            <p>Website</p>
+            <p class="break-all overflow-wrap-anywhere">{{ user.website or '-' }}</p>
+            <p>Description</p>
+            <p class=" break-all overflow-wrap-anywhere">{{ user.description or '-' }}</p>
+        </div>
+    </div>
+</div>
+
+{% if stories %}
+<div class="py-8">
+    <p class="text-xl font-bold mb-4">Stories written by this user:</p>
+    <div class="grid grid-cols-1 gap-4">
+        {% for story in stories %}
+            <div class="py-2 ">
+                <a href="{{ url_for('story.read_story', story_id=story.id) }}" class="story-title text-l font-semibold hover:text-gray-300 hover:underline">{{ story.title }}</a>
+                <p class="story-description text-gray-600">{{ story.description }}</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
 {% endblock %}

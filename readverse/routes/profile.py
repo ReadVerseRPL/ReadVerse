@@ -1,15 +1,17 @@
 from flask import Blueprint, redirect, render_template, url_for
-from sqlalchemy import select
+from sqlalchemy import select, desc
 
-from readverse.models import db, RegularUser
+from readverse.models import db, RegularUser, Story
+from readverse.plugins import current_user
 
 bp = Blueprint("profile", __name__, url_prefix="/profile")
 
 
 @bp.get("/")
 def profile():
-    # TODO: Show current user's profile
-    return render_template("pages/profile/index.html")
+    stories = db.session.query(Story).where(Story.author_id == current_user.get_id()).order_by(desc(Story.created_at)).all()
+    if len(stories) == 0: stories = None
+    return render_template("pages/profile/index.html", user=current_user, stories=stories)
 
 
 @bp.get("/edit")
