@@ -27,3 +27,9 @@ contentInput.addEventListener(
     );
   }, 1000)
 );
+
+(function () {
+  previewContainer.innerHTML = DOMPurify.sanitize(
+    marked.parse(contentInput.value)
+  );
+})();
