@@ -51,6 +51,11 @@
 <script type="module" src="{{ url_for('static', filename='story/comments.js') }}"></script>
 {% endif %}
 
+{% if current_user.username == story.author_id %}
+    <!-- Edit Button -->
+    <a href="{{ url_for('story.edit_story_page', story_id=story.id) }}" class="btn btn-secondary mt-4 w-full">Edit Story</a>
+{% endif %}
+
 <script defer>
     const content = {{ story.content | tojson }}
     document.querySelector("#story").innerHTML = DOMPurify.sanitize(

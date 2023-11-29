@@ -57,7 +57,10 @@ def read_story(story_id: int):
 
 @bp.get("/<int:story_id>/edit")
 def edit_story_page(story_id: int):
-    return render_template("pages/story/edit.html")
+    story = db.session.execute(
+        select(Story).where(Story.id == story_id)
+    ).scalar_one_or_none()
+    return render_template("pages/story/edit.html", story=story)
 
 
 @bp.post("/<int:story_id>/edit")
