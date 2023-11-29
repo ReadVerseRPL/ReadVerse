@@ -4,6 +4,11 @@
 <h1 class="text-2xl font-bold pt-4 pb-2">{{ story.title }}</h1>
 <p>Written by {{ story.author.username }}</p>
 
+{% if current_user.username == story.author_id %}
+    <!-- Edit Button -->
+    <a href="{{ url_for('story.edit_story_page', story_id=story.id) }}" class="btn btn-secondary mt-4 w-full md:w-fit">Edit Story</a>
+{% endif %}
+
 <div class="divider"></div>
 
 <div class="flex w-full justify-center pb-8">
@@ -51,18 +56,13 @@
 <script type="module" src="{{ url_for('static', filename='story/comments.js') }}"></script>
 {% endif %}
 
-{% if current_user.username == story.author_id %}
-    <!-- Edit Button -->
-    <a href="{{ url_for('story.edit_story_page', story_id=story.id) }}" class="btn btn-secondary mt-4 w-full">Edit Story</a>
-{% endif %}
-
 <script defer>
     const content = {{ story.content | tojson }}
     document.querySelector("#story").innerHTML = DOMPurify.sanitize(
       marked.parse(content)
     );
 
-    document.querySelector("#submitrating").addEventListener("click", async (e) => {
+    async function onRate(e) {
       e.preventDefault()
       const rating = document.querySelector('input[name="rating"]:checked').value
       if (!!!rating || rating == -1) return alert("Invalid rating value!")
@@ -76,6 +76,9 @@
       })
 
       alert("Successfully rated!")
-    })
+    }
+
+    const submitRateBtn = document.querySelector("#submitrating")
+    if (submitRateBtn) submitRateBtn.addEventListener("click", onRate)
 </script>
 {% endblock %}
