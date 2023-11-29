@@ -5,7 +5,6 @@ from readverse.models import Rating, RegularUser, db, Story
 from readverse.dto import CreateCommentDTO, CreateRatingDTO, CreateStoryDTO
 from readverse.utils import validate
 
-
 bp = Blueprint("story", __name__, url_prefix="/story")
 
 
@@ -57,15 +56,39 @@ def read_story(story_id: int):
 
 
 @bp.get("/<int:story_id>/edit")
-def edit_story_page():
-    return render_template("pages/story/edit.html")
+def edit_story_page(story_id: int):
+    story = db.session.execute(
+        select(Story).where(Story.id == story_id)
+    ).scalar_one_or_none()
+
+    if not story:
+        abort(404)
+        
+    return render_template("pages/story/edit.html", story=story)
 
 
 @bp.post("/<int:story_id>/edit")
 @validate
-def edit_story(form: CreateStoryDTO):
-    # TODO: Edit story based on input and redirect to story
-    return redirect(url_for("story.read_story", story_id=-1))
+def edit_story(story_id: int, form: CreateStoryDTO):
+    story = db.session.execute(
+        select(Story).where(Story.id == story_id)
+    ).scalar_one_or_none()
+
+    if not story:
+        abort(404)
+
+    genres = form.genres
+    if isinstance(genres, str):
+        genres = [genres]
+
+    story.title = form.title
+    story.description = form.description
+    story.content = form.content
+    story.genres = genres
+
+    db.session.commit()
+
+    return redirect(url_for("story.read_story", story_id=story.id))
 
 
 @bp.get("/<int:story_id>/comments")

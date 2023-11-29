@@ -1,5 +1,20 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Hello world!</h1>
+<div class="stories">
+    <h1 class="text-2xl font-bold mb-4">Recently Created Stories</h1>
+    {% if recent_stories %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {% for story in recent_stories %}
+                <div class="story-card p-4 rounded-lg border border-gray-300 shadow-md hover:shadow-lg">
+                    <h2 class="story-title text-xl font-semibold">{{ story.title }}</h2>
+                    <p class="story-description text-gray-600">{{ story.description }}</p>
+                    <a href="{{ url_for('story.read_story', story_id=story.id) }}" class="btn btn-primary mt-2">Read More</a>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No stories found.</p>
+    {% endif %}
+</div>
 {% endblock %}

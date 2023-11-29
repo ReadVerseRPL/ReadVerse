@@ -1,5 +1,28 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>TODO</h1>
+<h1 class="text-2xl font-bold py-4">Edit Story</h1>
+<form class="flex flex-col gap-4" method="POST" action="{{ url_for('story.edit_story', story_id=story.id) }}">
+    {{ forms.inputlabel("title", label="Title", type="text", value=story.title) }}
+    {% call forms.labelled_field("Description") %}
+        <textarea class="textarea textarea-bordered w-full" name="description" placeholder="Description">{{ story.description }}</textarea>
+    {% endcall %}
+
+    <div class="grid grid-cols-2 gap-4">
+        {% call forms.labelled_field("Content") %}
+            <textarea class="textarea textarea-bordered w-full" name="content" placeholder="Content" id="content">{{ story.content }}</textarea>
+        {% endcall %}
+    </div>
+    
+    <h4 class="font-bold">Genres</h4>
+    <div class="flex flex-col gap-2" id="genrecontainer">
+        {% for genre in story.genres %}
+            <input type="text" class="input input-bordered" name="genres" value="{{ genre }}">
+        {% endfor %}
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-4">Update</button>
+</form>
+
+<script src="{{ url_for('static', filename='story/edit.js') }}"></script>
 {% endblock %}
