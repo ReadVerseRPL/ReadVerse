@@ -18,6 +18,11 @@ class UpdateProfileDTO(BaseModel):
     about: str
     description: str
 
+class ChangePasswordDTO(BaseModel):
+    currentPassword: str
+    newPassword: str
+    confirmPassword: str
+    
 class CreateStoryDTO(BaseModel):
     title: RequiredString
     description: RequiredString
