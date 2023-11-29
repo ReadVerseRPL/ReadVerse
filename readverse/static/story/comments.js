@@ -17,6 +17,8 @@ const options = {
 };
 
 const formatter = new Intl.DateTimeFormat("en-US", options);
+const storyId = window.location.pathname.trimEnd("/").split("/").slice(-1)[0];
+
 /**
  * @typedef {Object} Comment
  * @property {string} content
@@ -30,11 +32,11 @@ const formatter = new Intl.DateTimeFormat("en-US", options);
  * @property {string} message
  * @property {T} data
  */
+
 /**
  * @returns {Promise<ServerResponse<Comment>>}
  */
 const fetchComments = async () => {
-  const storyId = window.location.pathname.trimEnd("/").split("/").slice(-1)[0];
   return (await fetch(`/story/${storyId}/comments`)).json();
 };
 
@@ -62,7 +64,17 @@ const CommentSection = () => {
     data: [],
   };
 
-  function postComment() {}
+  async function postComment() {
+    await fetch(`/story/${storyId}/comment`, {
+        method: "POST",
+        body: JSON.stringify({ content: content() }),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+    alert("Successfully commented!")
+    refetch()
+  }
 
   return html`<div class="flex flex-col gap-4">
     <textarea
