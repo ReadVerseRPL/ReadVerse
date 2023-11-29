@@ -12,6 +12,11 @@
         {% call forms.labelled_field("Content") %}
             <textarea class="textarea textarea-bordered w-full" name="content" placeholder="Content" id="content">{{ story.content }}</textarea>
         {% endcall %}
+        
+        <div class="flex flex-col gap-2">
+            <span class="text-sm align-bottom py-2">Preview</span>
+            <article class="prose" id="preview"></article>
+        </div>
     </div>
     
     <h4 class="font-bold">Genres</h4>
@@ -20,9 +25,10 @@
             <input type="text" class="input input-bordered" name="genres" value="{{ genre }}">
         {% endfor %}
     </div>
+    <button class="btn btn-primary w-fit" id="addGenreBtn">Add genre</button>
 
     <button type="submit" class="btn btn-primary mt-4">Update</button>
 </form>
 
-<script src="{{ url_for('static', filename='story/edit.js') }}"></script>
+<script src="{{ url_for('static', filename='story/create.js') }}" defer></script>
 {% endblock %}
