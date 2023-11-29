@@ -22,7 +22,7 @@
 
 <article class="prose mx-auto p-8 bg-gray-800 rounded-md !max-w-4xl" id="story"></article>
 
-{% if current_user.is_authenticated and not current_user.is_admin %}
+{% if current_user.is_authenticated and not current_user.is_admin and current_user.username != story.author_id %}
 <div class="divider"></div>
 
 <div class="flex flex-col gap-4 items-center">
