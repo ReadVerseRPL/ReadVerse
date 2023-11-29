@@ -1,5 +1,40 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>TODO</h1>
+<h1 class="text-2xl font-bold py-4">Edit Profile</h1>
+<form class="flex flex-col gap-4" method="POST" action="{{ url_for('profile.edit_profile_post') }}">
+    {{ forms.inputlabel("email", label="Email", type="text", value=user.email) }}
+
+    {{ forms.inputlabel("website", label="Website", type="text", value=user.website) }}
+
+    {{ forms.inputlabel("phone", label="Phone", type="text", value=user.phone_number) }}
+
+    {% call forms.labelled_field("About") %}
+        <textarea class="textarea textarea-bordered w-full" name="about" placeholder="Inform yourself here.." id="about">{{ user.about }}</textarea>
+    {% endcall %}
+
+    <div class="grid grid-cols-2 gap-4">
+        {% call forms.labelled_field("Description") %}
+            <textarea class="textarea textarea-bordered w-full" name="description" placeholder="Describe yourself here.." id="description"></textarea>
+        {% endcall %}
+        
+        <div class="flex flex-col gap-2">
+            <span class="text-sm align-bottom py-2">Preview</span>
+            <article class="prose" id="preview">
+
+            </article>
+        </div>
+    </div>
+    
+    <button type="submit" class="btn btn-primary mt-4">Update</button>
+</form>
+
+<script src="{{ url_for('static', filename='profile/edit.js') }}"></script>
+<script defer>
+    const content = {{ user.description | tojson }}
+    document.querySelector("#description").innerHTML = DOMPurify.sanitize(
+      marked.parse(content)
+    );
+    
+</script>
 {% endblock %}

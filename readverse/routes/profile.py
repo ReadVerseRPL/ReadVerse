@@ -1,7 +1,10 @@
-from flask import Blueprint, redirect, render_template, url_for
+from flask import Blueprint, redirect, render_template, url_for, abort
 from sqlalchemy import select
-
+from readverse.plugins import current_user
 from readverse.models import db, RegularUser
+from readverse.utils import validate
+from readverse.dto import UpdateProfileDTO
+
 
 bp = Blueprint("profile", __name__, url_prefix="/profile")
 
@@ -15,10 +18,30 @@ def profile():
 @bp.get("/edit")
 def edit_profile():
     # TODO: Show edit profile form
-    return render_template("pages/profile/edit.html")
+    return render_template("pages/profile/edit.html",
+        user = current_user
+    )
 
 
 @bp.post("/edit")
-def edit_profile_post():
-    # TODO: Process post request
-    return redirect(url_for("profile.profile"))
+@validate
+def edit_profile_post(form: UpdateProfileDTO):
+    user: RegularUser = db.session.execute(
+        select(RegularUser).where(RegularUser.username == current_user.get_id())
+    ).scalar_one_or_none()
+
+
+    print(current_user.get_id())
+    if not user:
+        abort(404)
+
+    user.about = form.about
+    user.email = form.email
+    user.description = form.description
+    user.phone_number = form.phone
+    user.website = form.website
+
+    print(user)
+    # db.session.add(user)
+    db.session.commit()
+    return redirect(url_for("profile.edit_profile"))
