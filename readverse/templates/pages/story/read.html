@@ -1,5 +1,76 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>TODO</h1>
+<h1 class="text-2xl font-bold pt-4 pb-2">{{ story.title }}</h1>
+<p>Written by {{ story.author.username }}</p>
+
+<div class="divider"></div>
+
+<div class="flex w-full justify-center pb-8">
+  <div class="flex flex-col gap-4 w-full">
+    <h2 class="text-xl font-bold pb-2">Description</h2>
+    <p class="pb-8">{{ story.description }}</p>
+  </div>
+
+  <div class="divider divider-horizontal"></div>
+
+  <div class="flex flex-col gap-4">
+    <strong class="text-xl text-center font-bold">Rating</strong>
+    <strong class="text-center font-bold text-2xl">{{ story.overall_rating | default("No Data", true) }}</strong>
+  </div>
+</div>
+
+<article class="prose mx-auto p-8 bg-gray-800 rounded-md !max-w-4xl" id="story"></article>
+
+{% if current_user.is_authenticated and not current_user.is_admin and current_user.username != story.author_id %}
+<div class="divider"></div>
+
+<div class="flex flex-col gap-4 items-center">
+  <strong class="text-xl text-center font-bold">Rate this story!</strong>
+  <div class="rating rating-lg">
+    <input type="radio" name="rating" value="-1" disabled checked class="hidden" />
+    {% for i in range(1, 6) %}
+    <input
+      type="radio"
+      name="rating"
+      value="1"
+      {% if current_rating and i == current_rating.value %}checked{% endif %}
+      class="mask mask-star-2 bg-orange-400" />
+    {% endfor %}
+  </div>
+  <button class="btn btn-primary w-fit mx-auto" id="submitrating">Submit</button>
+</div>
+{% endif %}
+
+
+{% if current_user.is_authenticated and not current_user.is_admin %}
+<div class="divider"></div>
+
+<h2 class="text-xl font-bold pb-2">Comments</h2>
+<div class="py-4" id="comments"></div>
+<script type="module" src="{{ url_for('static', filename='story/comments.js') }}"></script>
+{% endif %}
+
+<script defer>
+    const content = {{ story.content | tojson }}
+    document.querySelector("#story").innerHTML = DOMPurify.sanitize(
+      marked.parse(content)
+    );
+
+    document.querySelector("#submitrating").addEventListener("click", async (e) => {
+      e.preventDefault()
+      const rating = document.querySelector('input[name="rating"]:checked').value
+      if (!!!rating || rating == -1) return alert("Invalid rating value!")
+
+      await fetch("/story/{{ story.id }}/rate", {
+        method: "POST",
+        body: JSON.stringify({ value: rating }),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+
+      alert("Successfully rated!")
+    })
+</script>
 {% endblock %}

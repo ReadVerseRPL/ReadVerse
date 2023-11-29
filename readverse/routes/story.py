@@ -1,5 +1,7 @@
-from flask import Blueprint, jsonify, redirect, render_template, request, url_for
-
+from flask import Blueprint, abort, jsonify, redirect, render_template, request, url_for
+from sqlalchemy import select
+from readverse.plugins import current_user
+from readverse.models import Rating, RegularUser, db, Story
 from readverse.dto import CreateCommentDTO, CreateRatingDTO, CreateStoryDTO
 from readverse.utils import validate
 
@@ -10,8 +12,22 @@ bp = Blueprint("story", __name__, url_prefix="/story")
 @bp.post("/new")
 @validate
 def create_story(form: CreateStoryDTO):
-    # TODO: Create story based on input and redirect to story
-    return redirect(url_for("story.read_story", story_id=-1))
+    genres = form.genres
+    if isinstance(genres, str):
+        genres = [genres]
+
+    story = Story(
+        title=form.title,
+        description=form.description,
+        content=form.content,
+        genres=genres,
+        author=current_user,
+    )
+
+    db.session.add(story)
+    db.session.commit()
+
+    return redirect(url_for("story.read_story", story_id=story.id))
 
 
 @bp.get("/new")
@@ -21,8 +37,23 @@ def create_story_page():
 
 @bp.get("/<int:story_id>")
 def read_story(story_id: int):
-    # TODO: Get story by ID
-    return render_template("pages/story/read.html")
+    story = db.session.execute(
+        select(Story).where(Story.id == story_id)
+    ).scalar_one_or_none()
+    if not story:
+        abort(404)
+
+    current_rating = None
+    if current_user and isinstance(current_user, RegularUser):
+        current_rating = db.session.execute(
+            select(Rating).where(Rating.author == current_user)
+        ).scalar_one_or_none()
+
+    return render_template(
+        "pages/story/read.html",
+        story=story,
+        current_rating=current_rating,
+    )
 
 
 @bp.get("/<int:story_id>/edit")
@@ -40,7 +71,12 @@ def edit_story(form: CreateStoryDTO):
 @bp.get("/<int:story_id>/comments")
 def comments(story_id: int):
     # TODO: Get all comments and return as json
-    return jsonify([])
+    return jsonify(
+        {
+            "message": "Success",
+            "data": [],
+        }
+    )
 
 
 @bp.post("/<int:story_id>/comment")
