@@ -1,8 +1,9 @@
-from flask import Blueprint, jsonify, redirect, render_template, request, url_for
-
+from flask import Blueprint, abort, jsonify, redirect, render_template, request, url_for
+from sqlalchemy import select
+from readverse.plugins import current_user
+from readverse.models import db, Story
 from readverse.dto import CreateCommentDTO, CreateRatingDTO, CreateStoryDTO
 from readverse.utils import validate
-
 
 bp = Blueprint("story", __name__, url_prefix="/story")
 
@@ -32,9 +33,31 @@ def edit_story_page():
 
 @bp.post("/<int:story_id>/edit")
 @validate
-def edit_story(form: CreateStoryDTO):
-    # TODO: Edit story based on input and redirect to story
-    return redirect(url_for("story.read_story", story_id=-1))
+def edit_story(story_id, form: CreateStoryDTO):
+    # TODO [DONE?]: Edit story based on input and redirect to story
+    story = db.session.execute(
+        select(Story).where(Story.id == story_id)
+    ).scalar_one_or_none()
+
+    if not story:
+        abort(404)
+
+    # Check and handle 'genres' field if it's a string
+    genres = form.genres
+    if isinstance(genres, str):
+        genres = [genres]
+
+    # Update the story's attributes
+    story.title = form.title
+    story.description = form.description
+    story.content = form.content
+    story.genres = genres
+
+    # Save the updated story back to the database
+    db.session.commit()
+
+    # Redirect to the updated story's page
+    return redirect(url_for("story.read_story", story_id=story.id))
 
 
 @bp.get("/<int:story_id>/comments")
