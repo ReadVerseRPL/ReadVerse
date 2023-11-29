@@ -11,7 +11,7 @@ document.querySelector("#addGenreBtn").addEventListener("click", (e) => {
   genreContainer.append(node);
   node.querySelector("button").addEventListener("click", (e) => {
     e.preventDefault();
-    node.remove();
+    node.parentNode.remove();
   });
 });
 
@@ -31,5 +31,11 @@ contentInput.addEventListener(
 (function () {
   previewContainer.innerHTML = DOMPurify.sanitize(
     marked.parse(contentInput.value)
+  );
+  document.querySelectorAll(".remove").forEach((node) =>
+    node.addEventListener("click", (e) => {
+      e.preventDefault();
+      node.parentNode.remove();
+    })
   );
 })();
