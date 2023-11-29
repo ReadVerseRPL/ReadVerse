@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1 class="text-3xl font-bold pb-8">Profile</h1>
 <div class="w-3/4">
     <div class="story-card p-4 rounded-lg border border-gray-300">
         <div class="flex justify-between items-center pb-2">
@@ -14,17 +13,17 @@
         </div>
 
         <hr>
-        <div class="grid grid-cols-2 gap-4 py-4">
-            <p>About</p>
-            <p class="break-all overflow-wrap-anywhere">{{ user.about or '-' }}</p>
-            <p>Phone Number</p>
+        <div class="py-4">
+            <p class="text-xl pt-4 font-bold">About</p>
+            <p class="break-all overflow-wrap-anywhere">{{ user.about | default('-', true) }}</p>
+            <p class="text-xl pt-4 font-bold">Phone Number</p>
             <p class="break-all overflow-wrap-anywhere">{{ user.phone_number }}</p>
-            <p>Email</p>
+            <p class="text-xl pt-4 font-bold">Email</p>
             <p class="break-all overflow-wrap-anywhere">{{ user.email }}</p>
-            <p>Website</p>
-            <p class="break-all overflow-wrap-anywhere">{{ user.website or '-' }}</p>
-            <p>Description</p>
-            <p class=" break-all overflow-wrap-anywhere">{{ user.description or '-' }}</p>
+            <p class="text-xl pt-4 font-bold">Website</p>
+            <p class="break-all overflow-wrap-anywhere">{{ user.website | default('-', true) }}</p>
+            <p class="text-xl pt-4 font-bold">Description</p>
+            <article id="description">{{ user.description | default('-', true) }}</article>
         </div>
     </div>
 </div>
@@ -43,4 +42,10 @@
 </div>
 {% endif %}
 
+<script defer>
+    const desc = {{ user.description | tojson }}
+    if (desc !== '') {
+        document.querySelector("#description").innerHTML = DOMPurify.sanitize(marked.parse(desc));
+    }
+</script>
 {% endblock %}
