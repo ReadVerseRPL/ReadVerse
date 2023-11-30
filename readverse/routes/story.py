@@ -63,7 +63,7 @@ def edit_story_page(story_id: int):
 
     if not story:
         abort(404)
-        
+
     return render_template("pages/story/edit.html", story=story)
 
 
@@ -138,7 +138,7 @@ def delete_story(story_id: int):
     if not story:
         abort(404)
 
-    if (story.author_id == current_user.get_id() or current_user.is_admin):
+    if story.author_id == current_user.get_id() or current_user.is_admin:
         db.session.delete(story)
         db.session.commit()
         return jsonify(
@@ -146,8 +146,8 @@ def delete_story(story_id: int):
                 "message": "Story deleted",
             }
         )
-    
-    abort(404)
+
+    abort(403)
 
 
 @bp.delete("/<int:story_id>/comment/<int:comment_id>/delete")
@@ -158,13 +158,13 @@ def delete_comment(story_id: int, comment_id: int):
     if not comment:
         abort(404)
 
-    if (current_user.is_admin):
-        db.session.delete(comment)
-        db.session.commit()
-        return jsonify(
-            {
-                "message": "Comment deleted",
-            }
-        )
-    
-    abort(404)
+    if not current_user.is_admin:
+        abort(403)
+
+    db.session.delete(comment)
+    db.session.commit()
+    return jsonify(
+        {
+            "message": "Comment deleted",
+        }
+    )
