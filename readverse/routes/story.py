@@ -126,7 +126,7 @@ def create_rating(story_id: int, json: CreateRatingDTO):
     ).scalar_one_or_none()
 
     if not story:
-        abort(404)
+        return jsonify({"message": "Story not found"}), 404
 
     old_rating = db.session.execute(
         select(Rating).where(Rating.author == current_user)
@@ -173,7 +173,7 @@ def delete_story(story_id: int):
         select(Story).where(Story.id == story_id)
     ).scalar_one_or_none()
     if not story:
-        abort(404)
+        return jsonify({"message": "Story not found"}), 404
 
     if story.author_id == current_user.get_id() or current_user.is_admin:
         db.session.delete(story)
@@ -184,7 +184,7 @@ def delete_story(story_id: int):
             }
         )
 
-    abort(403)
+    return jsonify({"message": "Forbidden"}), 403
 
 
 @bp.delete("/<int:story_id>/comment/<int:comment_id>/delete")
@@ -193,10 +193,10 @@ def delete_comment(story_id: int, comment_id: int):
         select(Comment).where(Comment.id == comment_id)
     ).scalar_one_or_none()
     if not comment:
-        abort(404)
+        return jsonify({"message": "Comment not found"}), 404
 
     if not current_user.is_admin:
-        abort(403)
+        return jsonify({"message": "Forbidden"}), 403
 
     db.session.delete(comment)
     db.session.commit()
