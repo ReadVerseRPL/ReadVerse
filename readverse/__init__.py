@@ -1,3 +1,4 @@
+import traceback
 from werkzeug.exceptions import HTTPException
 from os import environ
 from flask import Flask, render_template
@@ -54,6 +55,7 @@ def create_app():
 
     @app.errorhandler(Exception)
     def handle_exception(e: HTTPException):
+        traceback.print_exception(e)
         return render_template(
             "error.html",
             status_code=500,
