@@ -50,7 +50,7 @@ const Comment = (props) => {
     <div class="flex flex-col md:flex-row justify-between md:items-center">
       <strong class="font-bold">${comment.username}</strong>
       <time class="text-sm text-gray-500" datetime=${comment.timestamp}
-        >${formatter.format(comment.timestamp)}</time
+        >${formatter.format(new Date(comment.timestamp))}</time
       >
     </div>
     <p>${comment.content}</p>
@@ -60,20 +60,18 @@ const Comment = (props) => {
 const CommentSection = () => {
   const [content, setContent] = createSignal("");
   const [comments, { refetch }] = createResource(fetchComments);
-  const allComments = comments() || {
-    data: [],
-  };
+  const emptyComments = { data: [] };
 
   async function postComment() {
     await fetch(`/story/${storyId}/comment`, {
-        method: "POST",
-        body: JSON.stringify({ content: content() }),
-        headers: {
-            "Content-Type": "application/json"
-        }
-    })
-    alert("Successfully commented!")
-    refetch()
+      method: "POST",
+      body: JSON.stringify({ content: content() }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    alert("Successfully commented!");
+    refetch();
   }
 
   return html`<div class="flex flex-col gap-4">
@@ -88,9 +86,9 @@ const CommentSection = () => {
       Comment
     </button>
 
-    <${For} each=${allComments.data}>
-        ${(comment) => html`<${Comment} comment=${comment} />`}
-    </For>
+    <${For} each=${() => (comments() || emptyComments).data}>
+      ${(comment) => html`<${Comment} comment=${comment} />`}
+    <//>
   </div>`;
 };
 
