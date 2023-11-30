@@ -107,6 +107,7 @@ def comments(story_id: int):
     comments = db.session.query(Comment).where(Comment.story_id == story_id).all()
 
     data = [{
+        "id": comment.id,
         "content": comment.content,
         "timestamp": comment.timestamp.isoformat(),
         "username": comment.author.username,
@@ -146,6 +147,7 @@ def create_comment(story_id: int, json: CreateCommentDTO):
             {
                 "message": "Comment created",
                 "data": {
+                    "id": comment.id,
                     "content": comment.content,
                     "timestamp": comment.timestamp.isoformat(),
                     "username": comment.author.username,
