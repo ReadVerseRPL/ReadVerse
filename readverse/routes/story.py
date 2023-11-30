@@ -129,11 +129,11 @@ def create_rating(story_id: int, json: CreateRatingDTO):
     if not story:
         abort(404)
 
-    oldRating: Rating = db.session.execute(
+    old_rating: Rating = db.session.execute(
         select(Rating).where(Rating.author == current_user)
     ).scalar_one_or_none()
 
-    if ( not oldRating ):
+    if ( not old_rating ):
         rating = Rating(
             value = value,
             author = current_user,
@@ -150,12 +150,12 @@ def create_rating(story_id: int, json: CreateRatingDTO):
             }
         )
     else :
-        oldRating.value = value
+        old_rating.value = value
         db.session.commit()
         return jsonify(
             {
                 "message": "Story rated",
-                "data": {oldRating},
+                "data": {old_rating},
             }
         )
 

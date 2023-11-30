@@ -39,16 +39,16 @@ def change_password_post(form: ChangePasswordDTO):
     if not user:
         abort(404)
 
-    if not check_password_hash(user.password, form.currentPassword):
+    if not check_password_hash(user.password, form.current_password):
         flash("Wrong Password!", "error")
         return redirect(url_for("profile.change_password"))
     
-    if (form.newPassword != form.confirmPassword):
+    if (form.new_password != form.confirm_password):
         flash("New Password Didn't Match", "error")
         return redirect(url_for("profile.change_password"))
     
-    newPassword = generate_password_hash(form.newPassword)
-    user.password = newPassword
+    new_password = generate_password_hash(form.new_password)
+    user.password = new_password
 
     db.session.commit()
     

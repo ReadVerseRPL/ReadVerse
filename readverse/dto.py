@@ -19,9 +19,9 @@ class UpdateProfileDTO(BaseModel):
     description: str
 
 class ChangePasswordDTO(BaseModel):
-    currentPassword: str
-    newPassword: str
-    confirmPassword: str
+    current_password: str
+    new_password: str
+    confirm_password: str
     
 class CreateStoryDTO(BaseModel):
     title: RequiredString
