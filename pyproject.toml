@@ -14,6 +14,8 @@ flask-migrate = "^4.0.5"
 flask-login = "^0.6.3"
 python-dotenv = "^1.0.0"
 pydantic = "^2.5.2"
+email-validator = "^2.1.0.post1"
+phonenumbers = "^8.13.26"
 
 
 [build-system]
