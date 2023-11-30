@@ -1,29 +1,29 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<h1 class="text-2xl font-bold pb-4">Profile</h1>
 <div class="w-3/4">
     <div class="story-card p-4 rounded-lg border border-gray-300">
         <div class="flex justify-between items-center pb-2">
             <p class="text-2xl font-bold">{{ user.username }}</p>
-            <a href="{{ url_for('profile.edit_profile') }}" class="text-gray-400 hover:text-gray-300">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
-                  </svg>      
-            </a>
+            <div>
+                <a href="{{ url_for('profile.edit_profile') }}" class="mr-4 hover:underline hover:text-gray-300">Edit Profile</a>
+                <a href="{{ url_for('profile.change_password') }}" class="hover:underline hover:text-gray-300">Change Password</a>
+            </div>
         </div>
 
         <hr>
         <div class="py-4">
-            <p class="text-xl pt-4 font-bold">About</p>
+            <p class="pt-4 font-bold">ABOUT</p>
             <p class="break-all overflow-wrap-anywhere">{{ user.about | default('-', true) }}</p>
-            <p class="text-xl pt-4 font-bold">Phone Number</p>
+            <p class="pt-4 font-bold">PHONE NUMBER</p>
             <p class="break-all overflow-wrap-anywhere">{{ user.phone_number }}</p>
-            <p class="text-xl pt-4 font-bold">Email</p>
+            <p class="pt-4 font-bold">EMAIL</p>
             <p class="break-all overflow-wrap-anywhere">{{ user.email }}</p>
-            <p class="text-xl pt-4 font-bold">Website</p>
+            <p class="pt-4 font-bold">WEBSITE</p>
             <p class="break-all overflow-wrap-anywhere">{{ user.website | default('-', true) }}</p>
-            <p class="text-xl pt-4 font-bold">Description</p>
-            <article id="description">{{ user.description | default('-', true) }}</article>
+            <p class="pt-4 font-bold">DESCRIPTION</p>
+            <article class="prose" id="description"></article>
         </div>
     </div>
 </div>
@@ -34,7 +34,7 @@
     <div class="grid grid-cols-1 gap-4">
         {% for story in stories %}
             <div class="py-2 ">
-                <a href="{{ url_for('story.read_story', story_id=story.id) }}" class="story-title text-l font-semibold hover:text-gray-300 hover:underline">{{ story.title }}</a>
+                <a href="{{ url_for('story.read_story', story_id=story.id) }}" class="story-title text-l font-semibold hover:text-gray-300 underline">{{ story.title }}</a>
                 <p class="story-description text-gray-600">{{ story.description }}</p>
             </div>
         {% endfor %}
@@ -43,9 +43,10 @@
 {% endif %}
 
 <script defer>
-    const desc = {{ user.description | tojson }}
-    if (desc !== '') {
-        document.querySelector("#description").innerHTML = DOMPurify.sanitize(marked.parse(desc));
-    }
+    const content = {{ user.description | tojson }}
+    document.querySelector("#description").innerHTML = DOMPurify.sanitize(
+      marked.parse(content)
+    );
+    
 </script>
 {% endblock %}
