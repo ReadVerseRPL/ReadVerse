@@ -55,14 +55,12 @@
 </div>
 {% endif %}
 
-
-{% if current_user.is_authenticated and not current_user.is_admin %}
 <div class="divider"></div>
 
 <h2 class="text-xl font-bold pb-2">Comments</h2>
-<div class="py-4" id="comments"></div>
+<div class="py-4" id="comments" data-admin="{{ current_user.is_admin }}" data-current-username="{{ current_user.username }}"></div>
 <script type="module" src="{{ url_for('static', filename='story/comments.js') }}"></script>
-{% endif %}
+
 
 <script defer>
     const content = {{ story.content | tojson }}
