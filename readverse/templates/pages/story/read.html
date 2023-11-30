@@ -11,8 +11,10 @@
 
 
 {% if current_user.username == story.author_id %}
-    <!-- Edit Button -->
-    <a href="{{ url_for('story.edit_story_page', story_id=story.id) }}" class="btn btn-secondary mt-4 w-full md:w-fit">Edit Story</a>
+    <div class="flex flex-col md:flex-row gap-4 mt-4">
+      <a href="{{ url_for('story.edit_story_page', story_id=story.id) }}" class="btn btn-secondary w-full md:w-fit">Edit Story</a>
+      <button class="btn btn-error w-full md:w-fit" id="removebtn">Remove Story</button>
+    </div>
 {% endif %}
 
 <div class="divider"></div>
@@ -87,4 +89,5 @@
     const submitRateBtn = document.querySelector("#submitrating")
     if (submitRateBtn) submitRateBtn.addEventListener("click", onRate)
 </script>
+<script src="{{ url_for('static', filename='story/index.js') }}" defer></script>
 {% endblock %}
