@@ -20,9 +20,28 @@ def profile():
     )
     if len(stories) == 0:
         stories = None
+
     return render_template(
         "pages/profile/index.html", user=current_user, stories=stories
     )
+
+
+@bp.get("/<username>")
+def user_profile(username: str):
+    user = db.session.query(RegularUser).where(RegularUser.username == username).first()
+    if not user:
+        abort(404)
+
+    stories = (
+        db.session.query(Story)
+        .where(Story.author_id == user.get_id())
+        .order_by(desc(Story.created_at))
+        .all()
+    )
+    if len(stories) == 0:
+        stories = None
+
+    return render_template("pages/profile/index.html", user=user, stories=stories)
 
 
 @bp.get("/edit")
