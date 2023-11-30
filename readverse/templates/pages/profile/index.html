@@ -6,10 +6,12 @@
     <div class="story-card p-4 rounded-lg border border-gray-300">
         <div class="flex justify-between items-center pb-2">
             <p class="text-2xl font-bold">{{ user.username }}</p>
+            {% if current_user.username == user.username %}
             <div>
                 <a href="{{ url_for('profile.edit_profile') }}" class="mr-4 hover:underline hover:text-gray-300">Edit Profile</a>
                 <a href="{{ url_for('profile.change_password') }}" class="hover:underline hover:text-gray-300">Change Password</a>
             </div>
+            {% endif %}
         </div>
 
         <hr>
@@ -31,12 +33,9 @@
 {% if stories %}
 <div class="py-8">
     <p class="text-xl font-bold mb-4">Stories written by this user:</p>
-    <div class="grid grid-cols-1 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {% for story in stories %}
-            <div class="py-2 ">
-                <a href="{{ url_for('story.read_story', story_id=story.id) }}" class="story-title text-l font-semibold hover:text-gray-300 underline">{{ story.title }}</a>
-                <p class="story-description text-gray-600">{{ story.description }}</p>
-            </div>
+            {{ macros.storybox(story) }}
         {% endfor %}
     </div>
 </div>
