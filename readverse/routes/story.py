@@ -106,12 +106,15 @@ def edit_story(story_id: int, form: CreateStoryDTO):
 def comments(story_id: int):
     comments = db.session.query(Comment).where(Comment.story_id == story_id).all()
 
-    data = [{
-        "id": comment.id,
-        "content": comment.content,
-        "timestamp": comment.timestamp.isoformat(),
-        "username": comment.author.username,
-             } for comment in comments]
+    data = [
+        {
+            "id": comment.id,
+            "content": comment.content,
+            "timestamp": comment.timestamp.isoformat(),
+            "username": comment.author.username,
+        }
+        for comment in comments
+    ]
 
     return jsonify(
         {
@@ -134,25 +137,21 @@ def create_comment(story_id: int, json: CreateCommentDTO):
     if not story:
         return jsonify({"message": "Story not found"}), 404
 
-    comment = Comment(
-            content = content,
-            author = current_user,
-            story = story
-    )
+    comment = Comment(content=content, author=current_user, story=story)
 
     db.session.add(comment)
     db.session.commit()
 
     return jsonify(
-            {
-                "message": "Comment created",
-                "data": {
-                    "id": comment.id,
-                    "content": comment.content,
-                    "timestamp": comment.timestamp.isoformat(),
-                    "username": comment.author.username,
-                },
-            }
+        {
+            "message": "Comment created",
+            "data": {
+                "id": comment.id,
+                "content": comment.content,
+                "timestamp": comment.timestamp.isoformat(),
+                "username": comment.author.username,
+            },
+        }
     )
 
 
@@ -241,7 +240,7 @@ def delete_comment(story_id: int, comment_id: int):
     if not comment:
         return jsonify({"message": "Comment not found"}), 404
 
-    if not current_user.is_admin:
+    if not current_user.is_admin and comment.author != current_user:
         return jsonify({"message": "Forbidden"}), 403
 
     db.session.delete(comment)
