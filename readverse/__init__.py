@@ -4,8 +4,9 @@ from os import environ
 from flask import Flask, render_template
 from dotenv import load_dotenv
 from sqlalchemy import select
+from flask_admin.contrib.sqla import ModelView
 
-from readverse.models import AllUser
+from readverse.models import AllUser, Comment, Story
 
 load_dotenv()
 
@@ -31,6 +32,9 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app)
     login_manager.init_app(app)
+
+    admin.add_view(ModelView(Story, db.session, endpoint="story_admin"))
+    admin.add_view(ModelView(Comment, db.session, endpoint="comment_admin"))
 
     from readverse.routes.auth import bp as auth_bp
     from readverse.routes.index import bp as index_bp
