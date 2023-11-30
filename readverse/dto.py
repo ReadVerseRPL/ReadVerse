@@ -11,7 +11,18 @@ class CreateCommentDTO(BaseModel):
 class CreateRatingDTO(BaseModel):
     value: int
 
+class UpdateProfileDTO(BaseModel):
+    email: str
+    website: str
+    phone: str
+    about: str
+    description: str
 
+class ChangePasswordDTO(BaseModel):
+    current_password: str
+    new_password: str
+    confirm_password: str
+    
 class CreateStoryDTO(BaseModel):
     title: RequiredString
     description: RequiredString

@@ -11,6 +11,7 @@ bp = Blueprint("index", __name__, url_prefix="/")
 @bp.get("/")
 def index():
     recent_stories = db.session.query(Story).order_by(desc(Story.created_at)).all()
+
     return render_template("pages/index.html", recent_stories=recent_stories)
 
 

@@ -44,7 +44,7 @@
     <input
       type="radio"
       name="rating"
-      value="1"
+      value="{{i}}"
       {% if current_rating and i == current_rating.value %}checked{% endif %}
       class="mask mask-star-2 bg-orange-400" />
     {% endfor %}
@@ -73,14 +73,14 @@
       const rating = document.querySelector('input[name="rating"]:checked').value
       if (!!!rating || rating == -1) return alert("Invalid rating value!")
 
-      await fetch("/story/{{ story.id }}/rate", {
+      const res = await fetch("/story/{{ story.id }}/rate", {
         method: "POST",
         body: JSON.stringify({ value: rating }),
         headers: {
           "Content-Type": "application/json"
         }
       })
-
+      
       alert("Successfully rated!")
     }
 

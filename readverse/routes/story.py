@@ -119,16 +119,45 @@ def create_comment(story_id: int, json: CreateCommentDTO):
 @bp.post("/<int:story_id>/rate")
 @validate
 def create_rating(story_id: int, json: CreateRatingDTO):
-    # TODO: Create rating object based on json data and save, then return json
-    value = json.value
 
-    return jsonify(
-        {
-            "message": "Story rated",
-            "data": {},  # TODO: Rating data here
-        }
-    )
+    value = json.value  
 
+    story = db.session.execute(
+        select(Story).where(Story.id == story_id)
+    ).scalar_one_or_none()
+
+    if not story:
+        abort(404)
+
+    old_rating: Rating = db.session.execute(
+        select(Rating).where(Rating.author == current_user)
+    ).scalar_one_or_none()
+
+    if ( not old_rating ):
+        rating = Rating(
+            value = value,
+            author = current_user,
+            story = story,
+        )
+
+        db.session.add(rating)
+        db.session.commit()
+
+        return jsonify(
+            {
+                "message": "Story rated",
+                "data": {rating},
+            }
+        )
+    else :
+        old_rating.value = value
+        db.session.commit()
+        return jsonify(
+            {
+                "message": "Story rated",
+                "data": {old_rating},
+            }
+        )
 
 @bp.delete("/<int:story_id>/delete")
 def delete_story(story_id: int):
