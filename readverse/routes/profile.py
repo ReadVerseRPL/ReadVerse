@@ -1,5 +1,5 @@
 from flask import Blueprint, flash, redirect, render_template, url_for, abort
-from sqlalchemy import select
+from sqlalchemy import select, desc
 from readverse.plugins import current_user
 from readverse.models import db, RegularUser, Story
 from readverse.utils import validate
