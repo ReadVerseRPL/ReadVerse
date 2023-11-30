@@ -1,4 +1,5 @@
 from flask import Blueprint, abort, jsonify, redirect, render_template, request, url_for
+from flask_login import login_required
 from sqlalchemy import select
 from readverse.plugins import current_user
 from readverse.models import Rating, RegularUser, db, Story, Comment
@@ -9,6 +10,7 @@ bp = Blueprint("story", __name__, url_prefix="/story")
 
 
 @bp.post("/new")
+@login_required
 @validate
 def create_story(form: CreateStoryDTO):
     genres = form.genres
@@ -30,6 +32,7 @@ def create_story(form: CreateStoryDTO):
 
 
 @bp.get("/new")
+@login_required
 def create_story_page():
     return render_template("pages/story/new.html")
 
@@ -56,6 +59,7 @@ def read_story(story_id: int):
 
 
 @bp.get("/<int:story_id>/edit")
+@login_required
 def edit_story_page(story_id: int):
     story = db.session.execute(
         select(Story).where(Story.id == story_id)
@@ -64,10 +68,14 @@ def edit_story_page(story_id: int):
     if not story:
         abort(404)
 
+    if story.author != current_user:
+        abort(403)
+
     return render_template("pages/story/edit.html", story=story)
 
 
 @bp.post("/<int:story_id>/edit")
+@login_required
 @validate
 def edit_story(story_id: int, form: CreateStoryDTO):
     story = db.session.execute(
@@ -76,6 +84,9 @@ def edit_story(story_id: int, form: CreateStoryDTO):
 
     if not story:
         abort(404)
+
+    if story.author != current_user:
+        abort(403)
 
     genres = form.genres
     if isinstance(genres, str):
@@ -103,6 +114,7 @@ def comments(story_id: int):
 
 
 @bp.post("/<int:story_id>/comment")
+@login_required
 @validate
 def create_comment(story_id: int, json: CreateCommentDTO):
     # TODO: Create comment based on content and save, then return json
@@ -117,6 +129,7 @@ def create_comment(story_id: int, json: CreateCommentDTO):
 
 
 @bp.post("/<int:story_id>/rate")
+@login_required
 @validate
 def create_rating(story_id: int, json: CreateRatingDTO):
     value = json.value
@@ -127,6 +140,9 @@ def create_rating(story_id: int, json: CreateRatingDTO):
 
     if not story:
         return jsonify({"message": "Story not found"}), 404
+
+    if story.author == current_user:
+        return jsonify({"message": "Cannot rate your own story"}), 403
 
     old_rating = db.session.execute(
         select(Rating).where(Rating.author == current_user)
@@ -168,6 +184,7 @@ def create_rating(story_id: int, json: CreateRatingDTO):
 
 
 @bp.delete("/<int:story_id>/delete")
+@login_required
 def delete_story(story_id: int):
     story = db.session.execute(
         select(Story).where(Story.id == story_id)
@@ -188,6 +205,7 @@ def delete_story(story_id: int):
 
 
 @bp.delete("/<int:story_id>/comment/<int:comment_id>/delete")
+@login_required
 def delete_comment(story_id: int, comment_id: int):
     comment = db.session.execute(
         select(Comment).where(Comment.id == comment_id)

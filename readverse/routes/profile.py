@@ -1,4 +1,5 @@
 from flask import Blueprint, flash, redirect, render_template, url_for, abort
+from flask_login import login_required
 from sqlalchemy import select, desc
 from readverse.plugins import current_user
 from readverse.models import db, RegularUser, Story
@@ -11,6 +12,7 @@ bp = Blueprint("profile", __name__, url_prefix="/profile")
 
 
 @bp.get("/")
+@login_required
 def profile():
     stories = (
         db.session.query(Story)
@@ -45,16 +47,19 @@ def user_profile(username: str):
 
 
 @bp.get("/edit")
+@login_required
 def edit_profile():
     return render_template("pages/profile/edit.html", user=current_user)
 
 
 @bp.get("/password")
+@login_required
 def change_password():
     return render_template("pages/profile/change_password.html")
 
 
 @bp.post("/password")
+@login_required
 @validate
 def change_password_post(form: ChangePasswordDTO):
     user = db.session.execute(
@@ -81,6 +86,7 @@ def change_password_post(form: ChangePasswordDTO):
 
 
 @bp.post("/edit")
+@login_required
 @validate
 def edit_profile_post(form: UpdateProfileDTO):
     user = db.session.execute(
