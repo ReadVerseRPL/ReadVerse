@@ -1,6 +1,7 @@
 from typing_extensions import Annotated
 import phonenumbers
 from pydantic import AfterValidator, BaseModel, EmailStr, StringConstraints
+from phonenumbers.phonenumberutil import NumberParseException
 
 
 def validate_phonenum(value: str) -> str:
@@ -8,7 +9,10 @@ def validate_phonenum(value: str) -> str:
         return value
     if value.startswith("0"):
         value = "+62" + value[1:]
-    assert phonenumbers.parse(value), f"{value} is not a valid phone number"
+    try:
+        phonenumbers.parse(value)
+    except NumberParseException:
+        raise AssertionError(f"{value} is not a valid phone number")
     return value
 
 
