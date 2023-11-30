@@ -1,6 +1,6 @@
 from functools import wraps
 import typing as t
-from flask import Response, jsonify, request
+from flask import flash, jsonify, redirect, request
 from pydantic import BaseModel, ValidationError
 
 from werkzeug.datastructures import MultiDict
@@ -44,7 +44,18 @@ def validate(f: t.Callable[P, TResponse]):
             if json_model:
                 kwargs["json"] = json_model.model_validate_json(request.data)
         except ValidationError as e:
-            return jsonify(e.errors()), 400
+            errors = e.errors()
+            best_mimetype = request.accept_mimetypes.best_match(
+                ["application/json", "text/html"], "application/json"
+            )
+            if best_mimetype == "application/json":
+                return jsonify(errors), 400
+
+            print(errors)
+            for error in errors:
+                path = ".".join(map(str, error["loc"]))
+                flash(f'{path}: {error["msg"]}', "error")
+            return redirect(request.path)
 
         return f(*args, **kwargs)
 
