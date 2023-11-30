@@ -104,11 +104,18 @@ def edit_story(story_id: int, form: CreateStoryDTO):
 
 @bp.get("/<int:story_id>/comments")
 def comments(story_id: int):
-    # TODO: Get all comments and return as json
+    comments = db.session.query(Comment).where(Comment.story_id == story_id).all()
+
+    data = [{
+        "content": comment.content,
+        "timestamp": comment.timestamp.isoformat(),
+        "username": comment.author.username,
+             } for comment in comments]
+
     return jsonify(
         {
             "message": "Success",
-            "data": [],
+            "data": data,
         }
     )
 
@@ -117,14 +124,33 @@ def comments(story_id: int):
 @login_required
 @validate
 def create_comment(story_id: int, json: CreateCommentDTO):
-    # TODO: Create comment based on content and save, then return json
     content = json.content
 
+    story = db.session.execute(
+        select(Story).where(Story.id == story_id)
+    ).scalar_one_or_none()
+
+    if not story:
+        return jsonify({"message": "Story not found"}), 404
+
+    comment = Comment(
+            content = content,
+            author = current_user,
+            story = story
+    )
+
+    db.session.add(comment)
+    db.session.commit()
+
     return jsonify(
-        {
-            "message": "Comment created",
-            "data": {},  # TODO: Comment data here
-        }
+            {
+                "message": "Comment created",
+                "data": {
+                    "content": comment.content,
+                    "timestamp": comment.timestamp.isoformat(),
+                    "username": comment.author.username,
+                },
+            }
     )
 
 

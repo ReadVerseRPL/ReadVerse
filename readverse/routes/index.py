@@ -18,5 +18,39 @@ def index():
 @bp.get("/search")
 @validate
 def search(query: SearchQueryDTO):
-    # TODO: Search stories based on query
-    return render_template("pages/search.html")
+    all_story = db.session.query(Story).all()
+    result=[]
+    query = query.query
+    if 'author=' in query:
+        author = query.split('author=')[1].strip()
+        for story in all_story:
+            if author == story.author.username:
+                result.append(story)    
+    elif 'description=' in query:
+        desc = query.split('description=')[1].strip().lower()
+        for story in all_story:
+            if desc in story.description.lower():
+                result.append(story)
+    elif 'genre=' in query:
+        genre = query.split('genre=')[1].strip().lower()
+        for story in all_story:
+            if genre in [genre.lower() for genre in story.genres]:
+                result.append(story)
+    elif 'rating=' in query:
+        rate = query.split('rating=')[1].strip().lower()
+        try:
+            rate = int(rate)
+            for story in all_story:
+                if (story.overall_rating if story.overall_rating != None else 0) >= rate:
+                    result.append(story)
+        except:
+            return render_template("pages/search.html", result=result)
+    else:
+        if 'title=' in query:
+            query = query.split('title=')[1].strip()
+        query = query.strip().lower()
+        for story in all_story:
+            if query in story.title.lower():
+                result.append(story)
+
+    return render_template("pages/search.html", result=result)
