@@ -103,4 +103,4 @@ def edit_profile_post(form: UpdateProfileDTO):
     user.website = form.website
 
     db.session.commit()
-    return redirect(url_for("profile.edit_profile"))
+    return redirect(url_for("profile.profile"))
