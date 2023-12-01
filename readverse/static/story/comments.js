@@ -111,7 +111,7 @@ const CommentSection = () => {
       </button>
     </>`}
 
-    <${For} each=${() => (comments() || emptyComments).data}>
+    <${For} each=${() => (comments() || emptyComments).data} fallback=${() => html`<p>No comments</p>`}>
       ${(comment) =>
         html`<${Comment} comment=${comment} refetch=${() => refetch} />`}
     <//>
