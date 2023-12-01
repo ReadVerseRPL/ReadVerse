@@ -44,7 +44,7 @@ class ChangePasswordDTO(BaseModel):
 
 class CreateStoryDTO(BaseModel):
     title: RequiredString
-    description: RequiredString
+    description: Annotated[str, StringConstraints(min_length=1, max_length=800)]
     content: RequiredString
     genres: list[RequiredString] | RequiredString = []
 
