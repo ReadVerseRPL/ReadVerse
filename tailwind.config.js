@@ -2,7 +2,11 @@
 module.exports = {
   content: ["./readverse/**/*.{html,js}"],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        serif: ["Lora", "serif"],
+      },
+    },
   },
   plugins: [require("@tailwindcss/typography"), require("daisyui")],
   safelist: [
