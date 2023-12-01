@@ -3,7 +3,7 @@
 {% block content %}
 <div class="space-y-4">
   <h1 class="text-4xl font-bold pt-4">{{ story.title }}</h1>
-  <p class="!mt-2">By {{ story.author.username }}</p>
+  <p class="!mt-2">By <a class="link link-hover hover:text-gray-300" href="/profile/{{story.author.username}}">{{ story.author.username }}</a></p>
   <p class="text-xl">{{ story.description }}</p>
   <div class="flex flex-wrap gap-2">
     {% for genre in story.genres %}

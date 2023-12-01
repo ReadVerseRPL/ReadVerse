@@ -60,11 +60,15 @@ const Comment = (props) => {
     class="flex flex-col gap-2 p-4 rounded-md border border-primary"
   >
     <div class="flex flex-col md:flex-row justify-between md:items-center">
-      <strong class="font-bold">${comment.username}</strong>
+      <a
+        class="font-bold link link-hover hover:text-gray-300"
+        href=${`/profile/${comment.username}`}
+        >${comment.username}</a
+      >
       <div>
         ${(comment.username == currentUsername || isAdmin) &&
         html`<a
-          class="mr-4 hover:underline hover:text-gray-300"
+          class="mr-4 hover:underline hover:text-gray-300 hover:cursor-pointer"
           onClick=${() => deleteComment()}
         >
           Delete
@@ -111,7 +115,10 @@ const CommentSection = () => {
       </button>
     </>`}
 
-    <${For} each=${() => (comments() || emptyComments).data} fallback=${() => html`<p>No comments</p>`}>
+    <${For}
+      each=${() => (comments() || emptyComments).data}
+      fallback=${() => html`<p>No comments</p>`}
+    >
       ${(comment) =>
         html`<${Comment} comment=${comment} refetch=${() => refetch} />`}
     <//>
