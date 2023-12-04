@@ -97,7 +97,11 @@ class Story(BaseModel):
         result: float | None = db.session.execute(
             select(func.avg(Rating.value)).where(Rating.story == self)
         ).scalar_one()
-        return result
+        
+        if result is not None:
+            return round(result, 2)
+        else:
+            return None
 
 
 class Comment(BaseModel):
