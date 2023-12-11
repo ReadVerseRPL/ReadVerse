@@ -89,15 +89,15 @@ class Story(BaseModel):
     author_id: Mapped[str] = mapped_column(ForeignKey("user.username"))
     author: Mapped[RegularUser] = relationship(back_populates="stories")
 
-    comments: Mapped[list["Comment"]] = relationship(back_populates="story")
-    ratings: Mapped[list["Rating"]] = relationship(back_populates="story")
+    comments: Mapped[list["Comment"]] = relationship(back_populates="story", cascade="all, delete")
+    ratings: Mapped[list["Rating"]] = relationship(back_populates="story", cascade="all, delete")
 
     @property
     def overall_rating(self):
         result: float | None = db.session.execute(
             select(func.avg(Rating.value)).where(Rating.story == self)
         ).scalar_one()
-        
+
         if result is not None:
             return round(result, 2)
         else:
