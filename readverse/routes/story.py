@@ -48,7 +48,7 @@ def read_story(story_id: int):
     current_rating = None
     if current_user and isinstance(current_user, RegularUser):
         current_rating = db.session.execute(
-            select(Rating).where(Rating.author == current_user)
+            select(Rating).where(Rating.author == current_user, Rating.story == story)
         ).scalar_one_or_none()
 
     return render_template(
@@ -172,7 +172,7 @@ def create_rating(story_id: int, json: CreateRatingDTO):
         return jsonify({"message": "Cannot rate your own story"}), 403
 
     old_rating = db.session.execute(
-        select(Rating).where(Rating.author == current_user)
+        select(Rating).where(Rating.author == current_user, Rating.story == story)
     ).scalar_one_or_none()
 
     if not old_rating:
