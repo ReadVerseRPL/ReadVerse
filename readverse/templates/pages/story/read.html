@@ -76,15 +76,21 @@
       const rating = document.querySelector('input[name="rating"]:checked').value
       if (!!!rating || rating == -1) return alert("Invalid rating value!")
 
-      const res = await fetch("/story/{{ story.id }}/rate", {
-        method: "POST",
-        body: JSON.stringify({ value: rating }),
-        headers: {
-          "Content-Type": "application/json"
+      try {
+        const res = await fetch("/story/{{ story.id }}/rate", {
+          method: "POST",
+          body: JSON.stringify({ value: rating }),
+          headers: {
+            "Content-Type": "application/json"
+          }
+        })
+        if (!res.ok) {
+          throw Error(res.statusText)
         }
-      })
-      
-      alert("Successfully rated!")
+        alert("Successfully rated!")
+      } catch (e) {
+        alert(`Failed to rate story: ${e.message}`)
+      }
     }
 
     const submitRateBtn = document.querySelector("#submitrating")

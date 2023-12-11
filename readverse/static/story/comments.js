@@ -41,7 +41,11 @@ const currentUsername = commentDiv.dataset.currentUsername;
  * @returns {Promise<ServerResponse<Comment>>}
  */
 const fetchComments = async () => {
-  return (await fetch(`/story/${storyId}/comments`)).json();
+  const res = await fetch(`/story/${storyId}/comments`);
+  if (!res.ok) {
+    throw Error(res.statusText);
+  }
+  return res.json();
 };
 
 const Comment = (props) => {
@@ -49,11 +53,22 @@ const Comment = (props) => {
   const comment = props.comment;
 
   async function deleteComment() {
-    await fetch(`/story/${storyId}/comment/${comment.id}/delete`, {
-      method: "DELETE",
-    });
-    alert("Successfully deleted!");
-    props.refetch();
+    try {
+      const res = await fetch(
+        `/story/${storyId}/comment/${comment.id}/delete`,
+        {
+          method: "DELETE",
+        }
+      );
+      if (!res.ok) {
+        throw Error(res.statusText);
+      }
+
+      alert("Successfully deleted!");
+      props.refetch();
+    } catch (e) {
+      alert(`Failed to delete comment: ${e.message}`);
+    }
   }
 
   return html`<div
@@ -88,15 +103,23 @@ const CommentSection = () => {
   const emptyComments = { data: [] };
 
   async function postComment() {
-    await fetch(`/story/${storyId}/comment`, {
-      method: "POST",
-      body: JSON.stringify({ content: content() }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    alert("Successfully commented!");
-    refetch();
+    try {
+      const res = await fetch(`/story/${storyId}/comment`, {
+        method: "POST",
+        body: JSON.stringify({ content: content() }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (!res.ok) {
+        throw Error(res.statusText);
+      }
+
+      alert("Successfully commented!");
+      refetch();
+    } catch (e) {
+      alert(`Failed to comment: ${e.message}`);
+    }
   }
 
   return html`<div class="flex flex-col gap-4">
