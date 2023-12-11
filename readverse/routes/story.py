@@ -43,7 +43,7 @@ def read_story(story_id: int):
         select(Story).where(Story.id == story_id)
     ).scalar_one_or_none()
     if not story:
-        abort(404)
+        abort(404, "Story not found!")
 
     current_rating = None
     if current_user and isinstance(current_user, RegularUser):
@@ -66,10 +66,10 @@ def edit_story_page(story_id: int):
     ).scalar_one_or_none()
 
     if not story:
-        abort(404)
+        abort(404, "Story not found!")
 
     if story.author != current_user:
-        abort(403)
+        abort(403, "You are not the owner of that story!")
 
     return render_template("pages/story/edit.html", story=story)
 
@@ -83,10 +83,10 @@ def edit_story(story_id: int, form: CreateStoryDTO):
     ).scalar_one_or_none()
 
     if not story:
-        abort(404)
+        abort(404, "Story not found!")
 
     if story.author != current_user:
-        abort(403)
+        abort(403, "You are not the owner of that story!")
 
     genres = form.genres
     if isinstance(genres, str):

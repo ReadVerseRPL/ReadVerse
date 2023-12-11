@@ -32,7 +32,7 @@ def profile():
 def user_profile(username: str):
     user = db.session.query(RegularUser).where(RegularUser.username == username).first()
     if not user:
-        abort(404)
+        abort(404, "Profile not found!")
 
     stories = (
         db.session.query(Story)
